@@ -1,0 +1,13 @@
+name: rSIP
+title: rSIP
+username:
+account: tacaro
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 8375410
+bundleId: 6871414
+url: https://tacaro.shinyapps.io/rSIP/
+when: 1677010117.59187
+lastSyncTime: 1677010117.59188
+asMultiple: FALSE
+asStatic: FALSE
