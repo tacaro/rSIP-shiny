@@ -2,16 +2,19 @@
 #' @param d_t dbl incubation time in days
 #' @param f_label strength of the SIP label to highlight in at%
 #' @param xlimits character vector: of x axis limits for plot
-#' @param include_legend logical: does the plot include the legend?
+#' @param include_legend logical: does the plot include the legend? Yes by default
+#' @param include_caption logical: does the plot include the descriptive caption? Yes by default
 
 require(tidyverse)
 
-plot_rel_error <- function(test_dataset, d_t, f_label, xlimits, include_legend = TRUE) {
+plot_rel_error_at2H <- function(test_dataset, d_t, f_label, xlimits, include_legend = TRUE, include_caption = TRUE) {
+  
+  # CALCULATE LIMITS
   upper_lim <- test_dataset |> 
     filter(dt == d_t) |> 
     filter(rel_error <= 0.5) |>
     filter(FL == f_label) |> 
-    pull(TD.days) |> 
+    pull(F2) |> 
     min()
   
   upper_lim_mu_d <- test_dataset |> 
@@ -25,7 +28,7 @@ plot_rel_error <- function(test_dataset, d_t, f_label, xlimits, include_legend =
     filter(dt == d_t) |> 
     filter(rel_error <= 0.5) |>
     filter(FL == f_label) |> 
-    pull(TD.days) |> 
+    pull(F2) |> 
     max()
   
   lower_lim_mu_d <- test_dataset |> 
@@ -35,13 +38,14 @@ plot_rel_error <- function(test_dataset, d_t, f_label, xlimits, include_legend =
     pull(mu.d) |> 
     max()
   
+  # PLOT
   test_dataset %>%
     # Argument input here to filter dataset to correct incubation time:
     filter(dt == d_t) |> 
     filter(FL > 15) |> 
     ggplot() +
     aes(
-      x = TD.days,
+      x = F2,
       y = rel_error,
       color = as.factor(FL)
     ) +
@@ -50,7 +54,7 @@ plot_rel_error <- function(test_dataset, d_t, f_label, xlimits, include_legend =
     #annotate(geom = "label", x = upper_lim, y = 0.1, color = "black", label = paste0(round(upper_lim, 1), " d")) +
     #annotate(geom = "label", x = lower_lim, y = 0.1, color = "black", label = paste0(round(lower_lim, 1), " d")) +
     geom_line(linewidth = 1) +
-    scale_color_viridis_d(option = "plasma", begin = 0.1, end = 0.9) +
+    scale_color_viridis_d(end = 0.9) +
     # Secondary axis with ticks marked
     scale_x_continuous(
       sec.axis = dup_axis(
@@ -69,15 +73,16 @@ plot_rel_error <- function(test_dataset, d_t, f_label, xlimits, include_legend =
       expand = FALSE
     ) +
     labs(
-      x = latex2exp::TeX("Generation Time (Days)"),
+      x = latex2exp::TeX("$^2F$ (at. %)"),
       y = latex2exp::TeX("Relative Error (%) =     $\\frac{\\sigma_{\\mu}}{\\mu}$"),
-      color = "Tracer Strength (D at. %)",
+      color = latex2exp::TeX("Tracer Strength $^{2}F$ (at. %)"),
       title = paste(d_t, "day incubation time"),
-      caption = paste(
-        "Quantification of growth: \n",
-        "Generation times: between", round(upper_lim, 1), "and", round(lower_lim, 1), "days, \n",
-        "Growth rate: between", round(lower_lim_mu_d, 3), "and", round(upper_lim_mu_d, 3), "days ^-1"
-        )
+      caption = if_else(include_caption, paste(
+        "Range of quantification: \n",
+        "CD% values: ", round(upper_lim, 1), "-", round(lower_lim, 1), "%, \n",
+        "Growth rate: ", round(lower_lim_mu_d, 3), "-", round(upper_lim_mu_d, 3), "days^-1"
+      ),
+      "")
     ) +
     theme_classic() +
     theme(
@@ -88,3 +93,5 @@ plot_rel_error <- function(test_dataset, d_t, f_label, xlimits, include_legend =
       #axis.ticks = element_line(linewidth = 1)
     )
 }
+
+

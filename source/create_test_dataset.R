@@ -29,7 +29,7 @@ create_test_dataset <- function(a = 1, F1 = 0, sigma_a = 0,
     crossing(
       FL = FL, # label strengths
       dt = dt, # incubation times
-      frac_F2 = seq(-5, 0, by = 0.01) %>% exp() # microbial fractional progression to FL
+      frac_F2 = seq(-5, 0, by = 0.005) %>% exp() # microbial fractional progression to FL
     ) %>% 
     mutate(
       F2 = F1 + FL * frac_F2, # generate F2 values in at% 
