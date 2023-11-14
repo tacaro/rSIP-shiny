@@ -35,10 +35,21 @@ plot_rel_error <- function(test_dataset, d_t, f_label, xlimits, include_legend =
     pull(mu.d) |> 
     max()
   
+  #>>>
+  # find the error minima (optima)
+  minimums <- test_dataset |> 
+    filter(dt == d_t) |> 
+    group_by(FL) |> 
+    filter(rel_error == min(rel_error))
+  
+  minimum_label <- minimums |>
+    filter(FL == f_label) |> 
+    pull(TD.days)
+  #>>>
+  
   test_dataset %>%
     # Argument input here to filter dataset to correct incubation time:
     filter(dt == d_t) |> 
-    filter(FL > 15) |> 
     ggplot() +
     aes(
       x = TD.days,
@@ -47,9 +58,8 @@ plot_rel_error <- function(test_dataset, d_t, f_label, xlimits, include_legend =
     ) +
     annotate(geom = "segment", x = lower_lim, xend = lower_lim, y = 0, yend = 0.5, color = "gray") +
     annotate(geom = "segment", x = upper_lim, xend = upper_lim, y = 0, yend = 0.5, color = "gray") +
-    #annotate(geom = "label", x = upper_lim, y = 0.1, color = "black", label = paste0(round(upper_lim, 1), " d")) +
-    #annotate(geom = "label", x = lower_lim, y = 0.1, color = "black", label = paste0(round(lower_lim, 1), " d")) +
     geom_line(linewidth = 1) +
+    # Scale color and fill
     scale_color_viridis_d(option = "plasma", begin = 0.1, end = 0.9) +
     # Secondary axis with ticks marked
     scale_x_continuous(
@@ -57,11 +67,27 @@ plot_rel_error <- function(test_dataset, d_t, f_label, xlimits, include_legend =
         breaks = c(round(upper_lim, 1), round(lower_lim, 1))
       )
     ) +
-    # Secondary axis with growth rate:
-    # scale_x_continuous(
-    #   sec.axis = sec_axis(~ log(2)/., breaks = c(0.1, 0.01, 0.002)),
-    #   
-    #   ) +
+    geom_segment(
+      data = minimums |> filter(FL > 15) |> filter(FL == f_label),
+      aes(
+        x = TD.days,
+        xend = TD.days,
+        y = 0,
+        yend = 50,
+        color = as.factor(FL)
+      ),
+      alpha = 0.7
+    ) +
+    geom_point(
+      data = minimums |> filter(FL > 15),
+      aes(fill = as.factor(FL)),
+      shape = 21,
+      color = "black",
+      fill = NA,
+      show.legend = FALSE,
+      size = 2.5,
+      stroke = 1
+    ) +
     scale_y_continuous(labels = scales::percent) + 
     coord_cartesian(
       ylim = c(0, 0.5),
@@ -84,7 +110,9 @@ plot_rel_error <- function(test_dataset, d_t, f_label, xlimits, include_legend =
       legend.position = if_else(include_legend, "bottom", "NA"),
       axis.text.x.top = element_text(angle = 45, hjust = 0),
       axis.title.x.top = element_blank(),
-      #panel.border = element_rect(color = "black", size = 2, fill = NA),
-      #axis.ticks = element_line(linewidth = 1)
+      panel.border = element_rect(color = "black", size = 1, fill = NA),
+      axis.text = element_text(face = "bold", color = "black"),
+      axis.title = element_text(face = "bold", color = "black"),
+      panel.grid = element_blank()
     )
 }
