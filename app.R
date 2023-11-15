@@ -118,18 +118,19 @@ if (interactive()) {
   server <- function(input, output) {
 
     # define observe that allows updating the label choices based off user input
-    observe({
+    observeEvent(input$fls, {
       fl_choices <- as.numeric(str_split_1(input$fls, pattern = ","))
       print(fl_choices)
       # Can use character(0) to remove all choices
       if (is.null(fl_choices))
         fl_choices <- character(0)
 
-      #### This breaks the app!! Why ?? :c
-      # updateSelectInput(session = session,
-      #                   inputId = "f_label",
-      #                   choices = fl_choices
-      # )
+      selected <- NULL
+      if (input$f_label %in% fl_choices) 
+        selected <- input$f_label
+      
+      ### This breaks the app!! Why ?? :c
+      updateSelectInput(inputId = "f_label", choices = fl_choices, selected = selected)
     })
 
     
