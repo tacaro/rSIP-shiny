@@ -1,15 +1,16 @@
 # Load required packages
-# commented packages are called but dont need to be loaded in-full
-library(shiny)     # CRAN v1.7.4
 
-#library(dplyr)     # CRAN v1.1.3
-#library(tidyr)     # CRAN v1.3.0
-#library(stringr)   # CRAN v1.5.0
-#library(ggplot2)   # CRAN v3.4.0
-#library(ggthemes)  # CRAN v4.2.4
-#library(plotly)    # CRAN v4.10.1
-#library(cowplot)   # CRAN v1.1.1 
-#library(latex2exp) # CRAN v0.9.6
+library(shiny)        # CRAN v1.7.4
+library(shinyWidgets) # CRAN v0.8.0 
+# commented packages are invoked but dont need to be loaded in-full
+#library(dplyr)       # CRAN v1.1.3
+#library(tidyr)       # CRAN v1.3.0
+#library(stringr)     # CRAN v1.5.0
+#library(ggplot2)     # CRAN v3.4.0
+#library(ggthemes)    # CRAN v4.2.4
+#library(plotly)      # CRAN v4.10.1
+#library(cowplot)     # CRAN v1.1.1 
+#library(latex2exp)   # CRAN v0.9.6
 
 # Required sourced functions
 source("source/plot_rel_error.R") # plotting function for gen_time
@@ -46,8 +47,11 @@ ui <- fluidPage(
       selectInput("dt", "Highlighted Incubation Time", choices = c(30)),
       #numericInput("dt", label = "Highlighted Incubation Time", value = 30),
       #numericInput("f_label", label = "Highlighted Label Strength (%)", value = 30),
-      sliderInput("xlimits_gen", label = "Plot 1 x-limits", value = c(0, 300), min = 0, max = 1000),
-      sliderInput("xlimits_2F", label = "Plot 2 x-limits", value = c(0, 60), min = 0, max = 100)
+      #sliderInput("xlimits_gen", label = "Plot 1 x-limits", value = c(0, 300), min = 0, max = 1000),
+      numericRangeInput("xlimits_gen", label = "Plot 1 x-limits", value = c(0, 300)),
+      numericRangeInput("xlimits_2F", label = "Plot 2 x-limits", value = c(0, 60)),
+      #sliderInput("xlimits_2F", label = "Plot 2 x-limits", value = c(0, 60), min = 0, max = 100)
+      numericRangeInput("xlimits_inc", label = "Plot 3 x-limits", value = c(0, 300))
     ),
     
     # what's in the main panel (center of page):
@@ -93,8 +97,8 @@ ui <- fluidPage(
         tabPanel(
           "Interactive Plots",
           withMathJax(
-            plotlyOutput("p_rel_error_plotly")),
-          plotlyOutput("p_rel_error_plotly_at2H")
+            plotly::plotlyOutput("p_rel_error_plotly")),
+          plotly::plotlyOutput("p_rel_error_plotly_at2H")
         ),
         
         # howto .md file
@@ -124,7 +128,7 @@ server <- function(input, output) {
 
   # define observe that allows updating the label choices based off user input
   observeEvent(input$fls, {
-    fl_choices <- as.numeric(str_split_1(input$fls, pattern = ","))
+    fl_choices <- as.numeric(stringr::str_split_1(input$fls, pattern = ","))
     print(fl_choices)
     # Can use character(0) to remove all choices
     if (is.null(fl_choices))
@@ -140,7 +144,7 @@ server <- function(input, output) {
 
   # define observe that allows updating the incubation time choices based off user input
   observeEvent(input$inc_times, {
-    dt_choices <- as.numeric(str_split_1(input$inc_times, pattern = ","))
+    dt_choices <- as.numeric(stringr::str_split_1(input$inc_times, pattern = ","))
     print(dt_choices)
     # Can use character(0) to remove all choices
     if (is.null(dt_choices))
@@ -158,10 +162,10 @@ server <- function(input, output) {
   # Define reactive things
   # A greeting (deprecated)
   concat_str <- reactive({paste("A", input$dt, "day incubation time with", input$f_label, "% D2O:")})
-  fls_num <- reactive({as.numeric(str_split_1(input$fls, pattern = ","))})
+  fls_num <- reactive({as.numeric(stringr::str_split_1(input$fls, pattern = ","))})
   
   # A numeric vector of incubation times for TD
-  incs_num <- reactive({as.numeric(str_split_1(input$inc_times, pattern = ","))})
+  incs_num <- reactive({as.numeric(stringr::str_split_1(input$inc_times, pattern = ","))})
   
   # Assimilation efficiency and error in assimilation efficiency for TD
   assim_a_dbl <- reactive({as.numeric(input$assim_a)})
@@ -188,7 +192,13 @@ server <- function(input, output) {
   outcome_summary <- reactive({
     tabulate_data(simulated_data(),
                   d_t = input$dt,
-                  f_label = input$f_label)
+                  f_label = input$f_label) |> 
+      dplyr::mutate_all(as.character) |> 
+      tidyr::pivot_longer(
+        cols = tidyselect::everything(),
+        names_to = "parameter",
+        values_to = "value"
+      )
   })
   
   
@@ -223,14 +233,14 @@ server <- function(input, output) {
     )
   })
 
-  output$p_rel_error_plotly_at2H <- renderPlotly({
+  output$p_rel_error_plotly_at2H <- plotly::renderPlotly({
     plotly_rel_error_at2H(
       simulated_data(),
       d_t = input$dt
     )
     })
   
-  output$p_rel_error_plotly <- renderPlotly({
+  output$p_rel_error_plotly <- plotly::renderPlotly({
     plotly_rel_error(
       simulated_data(),
       d_t = input$dt,
@@ -244,7 +254,7 @@ server <- function(input, output) {
       simulated_data(),
       d_t = input$dt,
       f_label = input$f_label,
-      xlimits = input$xlimits_gen,
+      xlimits = input$xlimits_inc,
       include_legend = TRUE
     )
   })

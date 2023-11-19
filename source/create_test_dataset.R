@@ -26,7 +26,7 @@ create_test_dataset <- function(a = 1, F1 = 0, sigma_a = 0,
     sigma_F1 = sigma_F1, # at%: approx as zero because 2H natabund is negligible
     sigma_F2 = sigma_F2 # at%: RMSE of proxy
   ) %>% 
-    crossing(
+    tidyr::crossing(
       FL = FL, # label strengths
       dt = dt, # incubation times
       frac_F2 = seq(-5, 0, by = 0.005) %>% exp() # microbial fractional progression to FL
