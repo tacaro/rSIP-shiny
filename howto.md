@@ -8,7 +8,7 @@ Designing a stable isotope probing (SIP) experiments involves three main decisio
 
 3.  The strength (enrichment) of your isotopic label
 
-Question 1 is up to you and your scientific question. What are you hoping to measure? Deuterium is incorporated into a wide variety of biomolecules and is used by all forms of life. Specific $^{13}C$ carbon sources may only be utilized by certain organisms - but this can be informative to learn about carbon utilization dynamics. For this tutorial, we will focus on deuterium $^2H$.
+`Question 1` is up to you and your scientific question. What are you hoping to measure? Deuterium is incorporated into a wide variety of biomolecules and is used by all forms of life. Specific $^{13}C$ carbon sources may only be utilized by certain organisms - but this can be informative to learn about carbon utilization dynamics. For this tutorial, we will focus on deuterium $^2H$.
 
 ### Microbial growth in the presence of an isotopic label
 
@@ -19,7 +19,7 @@ The rate at which an organism becomes enriched in $^2H$ depends on:
 3.  Its water hydrogen assimilation efficiency constant $a_w$
 4.  Its isotopic composition at the beginning of the experiment $F_0$
 
-> Note: here and elsewhere we use the symbol $F$ to refer to the isotopic fractional abundance in atom %. $^2F$ specifically denotes the fractional abundance of deuterium. We sometimes leave out the subscript because the relationship in question is general to all stable isotopes, or for brevity.
+> NOTE: Here and elsewhere we use the symbol $F$ to refer to the isotopic fractional abundance in atom %. $^2F$ specifically denotes the fractional abundance of deuterium. We sometimes leave out the subscript because the relationship is general to all stable isotopes. Or, for brevity.
 
 As an organism grows, it incorporates deuterium into newly synthesized biomass according to the relationship.
 
@@ -39,15 +39,15 @@ where:
 
 -   $\mu$ is growth rate in units of $t^-1$
 
-> Note: Newcomers are often tripped up with the idea of a growth rate in units of inverse time. I find it useful to think of this value as *cell equivalents per unit time.* For example, a growth rate of 0.01 means that $0.01 \space d^{-1}$ cell-equivalents is produced over the course of a day.
+> Note: Newcomers are sometimes tripped up on the idea of a growth rate in units of inverse time. I find it useful to think of this value as *cell equivalents per unit time.* For example, a growth rate of $0.01 d^{-1}$ could be thought of 0.01 biomass cell-equivalents are produced per day.
 
-What this looks like in graph form:
+Here, as a general schematic, we plot change in time on the x axis and change in microbial isotopic composition on the y axis.
 
 ![](files/schematic.png){width="500"}
 
-Or with modeled growth rates of 0.05 and 0.13:
+Here, we model the isotopic composition of two microbes with growth rates of $0.05 d^{-1}$ and $0.13 d^{-1}$:
 
-![](files/mu.png){width="1000"}
+![](files/mu.png){width="800"}
 
 ### Calculation of Growth Rate
 
@@ -101,8 +101,8 @@ Examining the uncertainty plots, take note of the following:
 
 1.  Asymptotic rise in relative error at longer generation times corresponds to difficulty distinguishing the organism's isotopic enrichment from noise.
 
-2.  Asymptotic rise in relative error at shorter generation times corresponds to an organism becoming *so* enriched that it approaches isotopic equilibrium with the label solution ($a \cdot F_L$).
+2.  Asymptotic rise in relative error at shorter generation times corresponds to an organism becoming *so* enriched that it approaches isotopic equilibrium with the label solution $a \cdot F_L$.
 
-3.  The error optimum represents the generation time/growth rate at which relative error is minimized. Consider this your optimum measurement precision.
+3.  The error optimum represents the generation time/growth rate at which relative error is minimized. Consider this your optimum measurement condition.
 
 ![](files/error_schematic.png){width="800"}
