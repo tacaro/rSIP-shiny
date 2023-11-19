@@ -5,57 +5,56 @@
 #' @param include_legend logical: does the plot include the legend? Yes by default
 #' @param include_caption logical: does the plot include the descriptive caption? Yes by default
 
-require(tidyverse)
+require(ggplot2)
 
 plot_rel_error_at2H <- function(test_dataset, d_t, f_label, xlimits, include_legend = TRUE, include_caption = TRUE) {
   
   # CALCULATE LIMITS
   upper_lim <- test_dataset |> 
-    filter(dt == d_t) |> 
-    filter(rel_error <= 0.5) |>
-    filter(FL == f_label) |> 
-    pull(F2) |> 
+    dplyr::filter(dt == d_t) |> 
+    dplyr::filter(rel_error <= 0.5) |>
+    dplyr::filter(FL == f_label) |> 
+    dplyr::pull(F2) |> 
     min()
   
   upper_lim_mu_d <- test_dataset |> 
-    filter(dt == d_t) |> 
-    filter(rel_error <= 0.5) |>
-    filter(FL == f_label) |> 
-    pull(mu.d) |> 
+    dplyr::filter(dt == d_t) |> 
+    dplyr::filter(rel_error <= 0.5) |>
+    dplyr::filter(FL == f_label) |> 
+    dplyr::pull(mu.d) |> 
     min()
   
   lower_lim <- test_dataset |> 
-    filter(dt == d_t) |> 
-    filter(rel_error <= 0.5) |>
-    filter(FL == f_label) |> 
-    pull(F2) |> 
+    dplyr::filter(dt == d_t) |> 
+    dplyr::filter(rel_error <= 0.5) |>
+    dplyr::filter(FL == f_label) |> 
+    dplyr::pull(F2) |> 
     max()
   
   lower_lim_mu_d <- test_dataset |> 
-    filter(dt == d_t) |> 
-    filter(rel_error <= 0.5) |>
-    filter(FL == f_label) |> 
-    pull(mu.d) |> 
+    dplyr::filter(dt == d_t) |> 
+    dplyr::filter(rel_error <= 0.5) |>
+    dplyr::filter(FL == f_label) |> 
+    dplyr::pull(mu.d) |> 
     max()
   
   
   # find the error minima (optima)
   minimums <- test_dataset |> 
-    filter(dt == d_t) |> 
-    group_by(FL) |> 
-    filter(rel_error == min(rel_error))
+    dplyr::filter(dt == d_t) |> 
+    dplyr::group_by(FL) |> 
+    dplyr::filter(rel_error == min(rel_error))
   
   minimum_label <- minimums |>
-    filter(FL > 15) |> 
-    filter(FL == f_label) |> 
-    pull(F2)
+    dplyr::filter(FL > 15) |> 
+    dplyr::filter(FL == f_label) |> 
+    dplyr::pull(F2)
   
   
   # PLOT
   test_dataset %>%
     # Argument input here to filter dataset to correct incubation time:
-    filter(dt == d_t) |> 
-    filter(FL > 15) |> 
+    dplyr::filter(dt == d_t) |> 
     ggplot() +
     aes(
       x = F2,
@@ -103,6 +102,7 @@ plot_rel_error_at2H <- function(test_dataset, d_t, f_label, xlimits, include_leg
       "")
     ) +
     theme_classic() +
+    ggprism::annotation_ticks(sides = "trbl") +
     theme(
       legend.position = if_else(include_legend, "bottom", "NA"),
       axis.text.x.top = element_text(angle = 45, hjust = 0),

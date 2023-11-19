@@ -4,52 +4,52 @@
 #' @param xlimits character vector: of x axis limits for plot
 #' @param include_legend logical: does the plot include the legend?
 
-require(tidyverse)
+require(ggplot2)
 
 plot_rel_error_inc <- function(test_dataset, d_t, f_label, xlimits, include_legend = TRUE) {
   upper_lim <- test_dataset |> 
-    filter(dt == d_t) |> 
-    filter(rel_error <= 0.5) |>
-    filter(FL == f_label) |> 
-    pull(TD.days) |> 
+    dplyr::filter(dt == d_t) |> 
+    dplyr::filter(rel_error <= 0.5) |>
+    dplyr::filter(FL == f_label) |> 
+    dplyr::pull(TD.days) |> 
     min()
   
   upper_lim_mu_d <- test_dataset |> 
-    filter(dt == d_t) |> 
-    filter(rel_error <= 0.5) |>
-    filter(FL == f_label) |> 
-    pull(mu.d) |> 
+    dplyr::filter(dt == d_t) |> 
+    dplyr::filter(rel_error <= 0.5) |>
+    dplyr::filter(FL == f_label) |> 
+    dplyr::pull(mu.d) |> 
     min()
   
   lower_lim <- test_dataset |> 
-    filter(dt == d_t) |> 
-    filter(rel_error <= 0.5) |>
-    filter(FL == f_label) |> 
-    pull(TD.days) |> 
+    dplyr::filter(dt == d_t) |> 
+    dplyr::filter(rel_error <= 0.5) |>
+    dplyr::filter(FL == f_label) |> 
+    dplyr::pull(TD.days) |> 
     max()
   
   lower_lim_mu_d <- test_dataset |> 
-    filter(dt == d_t) |> 
-    filter(rel_error <= 0.5) |>
-    filter(FL == f_label) |> 
-    pull(mu.d) |> 
+    dplyr::filter(dt == d_t) |> 
+    dplyr::filter(rel_error <= 0.5) |>
+    dplyr::filter(FL == f_label) |> 
+    dplyr::pull(mu.d) |> 
     max()
   
   #>>>
   # find the error minima (optima)
   minimums <- test_dataset |> 
-    filter(FL == f_label) |> 
-    group_by(dt) |> 
-    filter(rel_error == min(rel_error))
+    dplyr::filter(FL == f_label) |> 
+    dplyr::group_by(dt) |> 
+    dplyr::filter(rel_error == min(rel_error))
   
   minimum_dt <- minimums |>
-    filter(dt == d_t) |> 
-    pull(TD.days)
+    dplyr::filter(dt == d_t) |> 
+    dplyr::pull(TD.days)
   #>>>
   
   test_dataset %>%
     # Argument input here to filter dataset to correct incubation time:
-    filter(FL == f_label) |> 
+    dplyr::filter(FL == f_label) |> 
     ggplot() +
     aes(
       x = TD.days,
@@ -101,6 +101,7 @@ plot_rel_error_inc <- function(test_dataset, d_t, f_label, xlimits, include_lege
       title = paste0("Label = ", f_label, "%")
     ) +
     theme_bw() +
+    ggprism::annotation_ticks(sides = "trbl") +
     theme(
       legend.position = if_else(include_legend, "bottom", "NA"),
       axis.text.x.top = element_text(angle = 45, hjust = 0),

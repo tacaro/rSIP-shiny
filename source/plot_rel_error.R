@@ -4,52 +4,52 @@
 #' @param xlimits character vector: of x axis limits for plot
 #' @param include_legend logical: does the plot include the legend?
 
-require(tidyverse)
+require(ggplot2)
 
 plot_rel_error <- function(test_dataset, d_t, f_label, xlimits, include_legend = TRUE) {
   upper_lim <- test_dataset |> 
-    filter(dt == d_t) |> 
-    filter(rel_error <= 0.5) |>
-    filter(FL == f_label) |> 
-    pull(TD.days) |> 
+    dplyr::filter(dt == d_t) |> 
+    dplyr::filter(rel_error <= 0.5) |>
+    dplyr::filter(FL == f_label) |> 
+    dplyr::pull(TD.days) |> 
     min()
   
   upper_lim_mu_d <- test_dataset |> 
-    filter(dt == d_t) |> 
-    filter(rel_error <= 0.5) |>
-    filter(FL == f_label) |> 
-    pull(mu.d) |> 
+    dplyr::filter(dt == d_t) |> 
+    dplyr::filter(rel_error <= 0.5) |>
+    dplyr::filter(FL == f_label) |> 
+    dplyr::pull(mu.d) |> 
     min()
   
   lower_lim <- test_dataset |> 
-    filter(dt == d_t) |> 
-    filter(rel_error <= 0.5) |>
-    filter(FL == f_label) |> 
-    pull(TD.days) |> 
+    dplyr::filter(dt == d_t) |> 
+    dplyr::filter(rel_error <= 0.5) |>
+    dplyr::filter(FL == f_label) |> 
+    dplyr::pull(TD.days) |> 
     max()
   
   lower_lim_mu_d <- test_dataset |> 
-    filter(dt == d_t) |> 
-    filter(rel_error <= 0.5) |>
-    filter(FL == f_label) |> 
-    pull(mu.d) |> 
+    dplyr::filter(dt == d_t) |> 
+    dplyr::filter(rel_error <= 0.5) |>
+    dplyr::filter(FL == f_label) |> 
+    dplyr::pull(mu.d) |> 
     max()
   
   #>>>
   # find the error minima (optima)
   minimums <- test_dataset |> 
-    filter(dt == d_t) |> 
-    group_by(FL) |> 
-    filter(rel_error == min(rel_error))
+    dplyr::filter(dt == d_t) |> 
+    dplyr::group_by(FL) |> 
+    dplyr::filter(rel_error == min(rel_error))
   
   minimum_label <- minimums |>
-    filter(FL == f_label) |> 
-    pull(TD.days)
+    dplyr::filter(FL == f_label) |> 
+    dplyr::pull(TD.days)
   #>>>
   
   test_dataset %>%
     # Argument input here to filter dataset to correct incubation time:
-    filter(dt == d_t) |> 
+    dplyr::filter(dt == d_t) |> 
     ggplot() +
     aes(
       x = TD.days,
@@ -97,7 +97,7 @@ plot_rel_error <- function(test_dataset, d_t, f_label, xlimits, include_legend =
     labs(
       x = latex2exp::TeX("Generation Time (Days)"),
       y = latex2exp::TeX("Relative Error (%) =     $\\frac{\\sigma_{\\mu}}{\\mu}$"),
-      color = "Tracer Strength (D at. %)",
+      color = "Label Strength (D at. %)",
       title = paste(d_t, "day incubation time"),
       caption = paste(
         "Quantification of growth: \n",
@@ -106,6 +106,7 @@ plot_rel_error <- function(test_dataset, d_t, f_label, xlimits, include_legend =
         )
     ) +
     theme_classic() +
+    ggprism::annotation_ticks(sides = "trbl") +
     theme(
       legend.position = if_else(include_legend, "bottom", "NA"),
       axis.text.x.top = element_text(angle = 45, hjust = 0),

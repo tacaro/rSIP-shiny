@@ -5,14 +5,13 @@
 #' @param include_legend logical: does the plot include the legend? Yes by default
 #' @param include_caption logical: does the plot include the descriptive caption? Yes by default
 
-require(tidyverse)
+require(ggplot2)
 
 plotly_rel_error_at2H <- function(test_dataset, d_t, xlimits = c(0, 50)) {
   
   plot <- test_dataset %>%
     # Argument input here to filter dataset to correct incubation time:
-    filter(dt == d_t) |> 
-    filter(FL > 15) |> 
+    dplyr::filter(dt == d_t) |> 
     ggplot() +
     aes(
       x = F2,
@@ -31,7 +30,7 @@ plotly_rel_error_at2H <- function(test_dataset, d_t, xlimits = c(0, 50)) {
       expand = FALSE
     ) +
     labs(
-      color = "Tracer Strength (D at. %)",
+      color = "Label Strength (D at. %)",
       title = paste("Range of CD% Quantification:"),
       subtitle = paste(d_t, "day incubation time")) +
     theme_bw() +
@@ -39,8 +38,8 @@ plotly_rel_error_at2H <- function(test_dataset, d_t, xlimits = c(0, 50)) {
     )
     
     
-  ggplotly(plot) |> 
-    layout(
+  plotly::ggplotly(plot) |> 
+    plotly::layout(
       title = list(text = paste0('Range of CD% Quantification:',
                                  '<br>',
                                  '<sup>',
@@ -51,7 +50,7 @@ plotly_rel_error_at2H <- function(test_dataset, d_t, xlimits = c(0, 50)) {
       yaxis = list(
         title = TeX("\\text{Relative Error } \\left(\\frac{\\sigma_{\\mu}}{\\mu} \\right)"))
     ) |> 
-    config(
+    plotly::config(
       mathjax = "cdn"
     )
 }

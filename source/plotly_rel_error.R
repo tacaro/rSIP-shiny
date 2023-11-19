@@ -4,13 +4,13 @@
 #' @param xlimits character vector: of x axis limits for plot
 #' @param include_legend logical: does the plot include the legend?
 
-require(tidyverse)
+require(ggplot2)
+
 plotly_rel_error <- function(test_dataset, d_t, f_label, xlimits = c(0, 300), include_legend = TRUE) {
   
   plot <- test_dataset %>%
     # Argument input here to filter dataset to correct incubation time:
-    filter(dt == d_t) |> 
-    filter(FL > 15) |> 
+    dplyr::filter(dt == d_t) |> 
     ggplot() +
     aes(
       x = TD.days,
@@ -36,8 +36,8 @@ plotly_rel_error <- function(test_dataset, d_t, f_label, xlimits = c(0, 300), in
     theme_bw() +
     theme()
   
-  ggplotly(plot) |> 
-    layout(
+  plotly::ggplotly(plot) |> 
+    plotly::layout(
       title = list(text = paste0('Range of Growth Rate Quantification:',
                                  '<br>',
                                  '<sup>',
@@ -45,5 +45,5 @@ plotly_rel_error <- function(test_dataset, d_t, f_label, xlimits = c(0, 300), in
                                  d_t, " days",
                                  '</sup>'))
     ) |> 
-    config(.Last.value, mathjax = 'cdn')
+    plotly::config(.Last.value, mathjax = 'cdn')
 }
