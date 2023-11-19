@@ -1,14 +1,15 @@
 # Load required packages
+# commented packages are called but dont need to be loaded in-full
 library(shiny)     # CRAN v1.7.4
-library(dplyr)     # CRAN v1.1.3
-library(tidyr)     # CRAN v1.3.0
-library(stringr)   # CRAN v1.5.0
-library(ggplot2)   # CRAN v3.4.0
-library(ggthemes)  # CRAN v4.2.4
-library(plotly)    # CRAN v4.10.1
-library(cowplot)   # CRAN v1.1.1 
-library(latex2exp) # CRAN v0.9.6
-library(DT)        # CRAN v0.30
+
+#library(dplyr)     # CRAN v1.1.3
+#library(tidyr)     # CRAN v1.3.0
+#library(stringr)   # CRAN v1.5.0
+#library(ggplot2)   # CRAN v3.4.0
+#library(ggthemes)  # CRAN v4.2.4
+#library(plotly)    # CRAN v4.10.1
+#library(cowplot)   # CRAN v1.1.1 
+#library(latex2exp) # CRAN v0.9.6
 
 # Required sourced functions
 source("source/plot_rel_error.R") # plotting function for gen_time
@@ -57,14 +58,16 @@ ui <- fluidPage(
           fluidRow(),
            # top two plots:
            fluidRow(
+             h4("Plot: Multiple Label Strengths"),
              plotOutput("p_rel_error"),
              width = 8,
              height = 20
            ),
            # bottom plot:
            fluidRow(
+             h4("Plot: Multiple Incubation Times"),
              plotOutput("p_rel_error_inc"),
-             width = 8,
+             width = 6,
              height = 20
            ),
         ),
@@ -74,15 +77,16 @@ ui <- fluidPage(
           title = "Table Output",
           h6("Please be patient - it may take a moment to render the tables."),
           h3("Summary of Results"),
+          tableOutput(outputId = "tabulated_results"),
+          h3("Downloads"),
           downloadButton(outputId = "downloadtabulated",
                          label = "Download Summary"),
-          tableOutput(outputId = "tabulated_results"),
-          h3("Explore Model Output"),
           # Button
           downloadButton(outputId = "downloadmodeldata", 
-                         label = "Download Model Output"),
-          # DT
-          tableOutput(outputId = "model_output")
+                         label = "Download All Model Output"),
+          # Uncomment to show all the model output in the GUI --
+          # Slows down the app a LOT!
+          #tableOutput(outputId = "model_output")
         ),
         
         # plotly plots
