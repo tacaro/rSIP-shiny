@@ -19,6 +19,11 @@ RUN install2.r -r http://cran.rstudio.com/ \
   shiny \
   shinydashboard
 
+# install additional CRAN packages
+RUN install2.r -r http://cran.rstudio.com/ \
+  shinyWidgets \
+  ggprism
+
 # markdown
 RUN install2.r -r http://cran.rstudio.com/ markdown
 
